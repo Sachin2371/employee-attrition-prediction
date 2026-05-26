@@ -1,0 +1,7 @@
+**pycache**/
+.idea/
+venv/
+*.pyc
+*.pkl
+.env
+.DS_Store
