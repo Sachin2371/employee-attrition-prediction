@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-chart-pie"></i> Prediction Results</h4>
+            </div>
+            <div class="card-body text-center">
+                {% if prediction == 'Yes' %}
+                <div class="alert alert-danger">
+                    <h2><i class="fas fa-exclamation-triangle"></i> High Attrition Risk</h2>
+                    <p class="lead">This employee has a <strong>{{ "%.1f"|format(probability * 100) }}%</strong> probability of leaving</p>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <h2><i class="fas fa-check-circle"></i> Low Attrition Risk</h2>
+                    <p class="lead">This employee has a <strong>{{ "%.1f"|format((1 - probability) * 100) }}%</strong> probability of staying</p>
+                </div>
+                {% endif %}
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6>Key Employee Details</h6>
+                            </div>
+                            <div class="card-body text-start">
+                                <p><strong>Age:</strong> {{ employee_data.Age }}</p>
+                                <p><strong>Department:</strong> {{ employee_data.Department }}</p>
+                                <p><strong>Job Role:</strong> {{ employee_data.JobRole }}</p>
+                                <p><strong>Monthly Income:</strong> ${{ employee_data.MonthlyIncome }}</p>
+                                <p><strong>Job Satisfaction:</strong> {{ employee_data.JobSatisfaction }}/4</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6>Risk Factors</h6>
+                            </div>
+                            <div class="card-body text-start">
+                                <p><strong>Years Since Promotion:</strong> {{ employee_data.YearsSinceLastPromotion }}</p>
+                                <p><strong>Overtime:</strong> {{ employee_data.OverTime }}</p>
+                                <p><strong>Work Life Balance:</strong> {{ employee_data.WorkLifeBalance }}/4</p>
+                                <p><strong>Environment Satisfaction:</strong> {{ employee_data.EnvironmentSatisfaction }}/4</p>
+                                <p><strong>Business Travel:</strong> {{ employee_data.BusinessTravel }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{ url_for('prediction') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-redo"></i> New Prediction
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

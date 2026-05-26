@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-file-csv"></i> Batch Prediction Results</h4>
+            </div>
+            <div class="card-body">
+                <!-- Summary Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body text-center">
+                                <h4>{{ total_records }}</h4>
+                                <p>Total Records</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body text-center">
+                                <h4>{{ processed_records }}</h4>
+                                <p>Processed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-danger">
+                            <div class="card-body text-center">
+                                <h4>{{ high_risk }}</h4>
+                                <p>High Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body text-center">
+                                <h4>{{ low_risk }}</h4>
+                                <p>Low Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if error_count > 0 %}
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Processing Warnings</h6>
+                    <p>{{ error_count }} records had errors during processing. Check the flash messages for details.</p>
+                </div>
+                {% endif %}
+
+                <!-- Download Button -->
+                <div class="text-center mb-4">
+                    <a href="{{ url_for('download_batch_results') }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-download"></i> Download Full Results (CSV)
+                    </a>
+                </div>
+
+                <!-- Sample Results Table -->
+                <h5>Sample Results (First 10 records):</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Age</th>
+                                <th>Department</th>
+                                <th>Job Role</th>
+                                <th>Monthly Income</th>
+                                <th>Prediction</th>
+                                <th>Probability</th>
+                                <th>Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in predictions %}
+                            <tr>
+                                <td>{{ pred.Age }}</td>
+                                <td>{{ pred.Department }}</td>
+                                <td>{{ pred.JobRole }}</td>
+                                <td>${{ pred.MonthlyIncome }}</td>
+                                <td>
+                                    <span class="badge {% if pred.Prediction == 'Yes' %}bg-danger{% else %}bg-success{% endif %}">
+                                        {{ pred.Prediction }}
+                                    </span>
+                                </td>
+                                <td>{{ pred.Probability_Percent }}</td>
+                                <td>
+                                    <span class="badge {% if pred.Risk_Level == 'High' %}bg-danger{% else %}bg-success{% endif %}">
+                                        {{ pred.Risk_Level }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('prediction') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-redo"></i> New Prediction
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Attrition - Employee Attrition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-links a:hover::before {
+            left: 0;
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .welcome {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .prediction-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 40px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.4s ease;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .tab.active {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab.active::before {
+            left: 0;
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary::before {
+            background: linear-gradient(135deg, #5a6268, #6c757d);
+        }
+
+        /* Fixed File Upload Styles */
+        .file-upload-area {
+            border: 3px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+            transform: scale(1.02);
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .file-info.success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .file-info.error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.2);
+        }
+
+        .result.success::before {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .result.danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.2);
+        }
+
+        .result.danger::before {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+        }
+
+        .result h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .probability {
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 15px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .flash-messages {
+            margin-bottom: 30px;
+        }
+
+        .flash-message {
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            animation: slideIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flash-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .flash-message.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .flash-message.success::before {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .flash-message.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .flash-message.error::before {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+        }
+
+        .requirements-box {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .requirements-box h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .requirements-box ul {
+            list-style: none;
+            color: #666;
+        }
+
+        .requirements-box li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .requirements-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .page-header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EmployeeAttrition.ai</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+            <a href="{{ url_for('predict') }}" class="active">🔮 Predict</a>
+            <div class="user-info">
+                <span class="welcome">👋 Welcome, {{ username }}!</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">🚪 Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="prediction-container">
+            <div class="page-header">
+                <h1>🎯 Employee Attrition Prediction</h1>
+                <p>Predict which employees are likely to leave your organization</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('manual')">
+                    📝 Manual Input
+                </button>
+                <button class="tab" onclick="switchTab('csv')">
+                    📊 CSV Upload
+                </button>
+            </div>
+
+            <!-- Manual Input Tab -->
+            <div id="manual-tab" class="tab-content active">
+                <form method="POST" id="prediction-form" onsubmit="showLoading(this)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="Age">👤 Age</label>
+                            <input type="number" id="Age" name="Age" value="41" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="BusinessTravel">✈️ Business Travel</label>
+                            <select id="BusinessTravel" name="BusinessTravel" required>
+                                <option value="Travel_Rarely">Travel Rarely</option>
+                                <option value="Travel_Frequently">Travel Frequently</option>
+                                <option value="Non-Travel">Non-Travel</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="DailyRate">💰 Daily Rate</label>
+                            <input type="number" id="DailyRate" name="DailyRate" value="1102" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Department">🏢 Department</label>
+                            <select id="Department" name="Department" required>
+                                <option value="Sales">Sales</option>
+                                <option value="Research & Development">Research & Development</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="DistanceFromHome">🏠 Distance From Home</label>
+                            <input type="number" id="DistanceFromHome" name="DistanceFromHome" value="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Education">🎓 Education (1:Below College, 2:College, 3:Bachelor, 4:Master, 5:Doctor)</label>
+                            <input type="number" id="Education" name="Education" min="1" max="5" value="2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="EducationField">📚 Education Field</label>
+                            <select id="EducationField" name="EducationField" required>
+                                <option value="Life Sciences">Life Sciences</option>
+                                <option value="Medical">Medical</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Technical Degree">Technical Degree</option>
+                                <option value="Other">Other</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="EnvironmentSatisfaction">🌿 Environment Satisfaction (1:Low - 4:High)</label>
+                            <input type="number" id="EnvironmentSatisfaction" name="EnvironmentSatisfaction" min="1" max="4" value="2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Gender">⚧️ Gender</label>
+                            <select id="Gender" name="Gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="HourlyRate">⏰ Hourly Rate</label>
+                            <input type="number" id="HourlyRate" name="HourlyRate" value="94" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="JobInvolvement">💼 Job Involvement (1:Low - 4:High)</label>
+                            <input type="number" id="JobInvolvement" name="JobInvolvement" min="1" max="4" value="3" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="JobLevel">📈 Job Level</label>
+                            <input type="number" id="JobLevel" name="JobLevel" min="1" max="5" value="2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="JobRole">👔 Job Role</label>
+                            <select id="JobRole" name="JobRole" required>
+                                <option value="Sales Executive">Sales Executive</option>
+                                <option value="Research Scientist">Research Scientist</option>
+                                <option value="Laboratory Technician">Laboratory Technician</option>
+                                <option value="Manufacturing Director">Manufacturing Director</option>
+                                <option value="Healthcare Representative">Healthcare Representative</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Sales Representative">Sales Representative</option>
+                                <option value="Research Director">Research Director</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="JobSatisfaction">😊 Job Satisfaction (1:Low - 4:High)</label>
+                            <input type="number" id="JobSatisfaction" name="JobSatisfaction" min="1" max="4" value="4" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="MaritalStatus">💑 Marital Status</label>
+                            <select id="MaritalStatus" name="MaritalStatus" required>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="MonthlyIncome">💵 Monthly Income</label>
+                            <input type="number" id="MonthlyIncome" name="MonthlyIncome" value="5993" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="MonthlyRate">📊 Monthly Rate</label>
+                            <input type="number" id="MonthlyRate" name="MonthlyRate" value="19479" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="NumCompaniesWorked">🏢 Number of Companies Worked</label>
+                            <input type="number" id="NumCompaniesWorked" name="NumCompaniesWorked" value="8" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="OverTime">⏱️ Over Time</label>
+                            <select id="OverTime" name="OverTime" required>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="PercentSalaryHike">📈 Percent Salary Hike</label>
+                            <input type="number" id="PercentSalaryHike" name="PercentSalaryHike" value="11" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="PerformanceRating">⭐ Performance Rating (1:Low - 4:High)</label>
+                            <input type="number" id="PerformanceRating" name="PerformanceRating" min="1" max="4" value="3" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="RelationshipSatisfaction">❤️ Relationship Satisfaction (1:Low - 4:High)</label>
+                            <input type="number" id="RelationshipSatisfaction" name="RelationshipSatisfaction" min="1" max="4" value="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="StockOptionLevel">📊 Stock Option Level</label>
+                            <input type="number" id="StockOptionLevel" name="StockOptionLevel" min="0" max="3" value="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="TotalWorkingYears">🕒 Total Working Years</label>
+                            <input type="number" id="TotalWorkingYears" name="TotalWorkingYears" value="8" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="TrainingTimesLastYear">🎯 Training Times Last Year</label>
+                            <input type="number" id="TrainingTimesLastYear" name="TrainingTimesLastYear" value="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="WorkLifeBalance">⚖️ Work Life Balance (1:Bad - 4:Good)</label>
+                            <input type="number" id="WorkLifeBalance" name="WorkLifeBalance" min="1" max="4" value="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="YearsAtCompany">🏢 Years At Company</label>
+                            <input type="number" id="YearsAtCompany" name="YearsAtCompany" value="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="YearsInCurrentRole">👔 Years In Current Role</label>
+                            <input type="number" id="YearsInCurrentRole" name="YearsInCurrentRole" value="4" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="YearsSinceLastPromotion">⬆️ Years Since Last Promotion</label>
+                            <input type="number" id="YearsSinceLastPromotion" name="YearsSinceLastPromotion" value="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="YearsWithCurrManager">👥 Years With Current Manager</label>
+                            <input type="number" id="YearsWithCurrManager" name="YearsWithCurrManager" value="5" required>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn" id="predict-btn">
+                            🔮 Predict Attrition
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            🔄 Reset Form
+                        </button>
+                    </div>
+                </form>
+
+                {% if prediction %}
+                    <div class="result {{ 'danger' if prediction == 'Yes' else 'success' }}">
+                        <h3>
+                            {% if prediction == 'Yes' %}
+                                ⚠️ High Risk of Attrition
+                            {% else %}
+                                ✅ Low Risk of Attrition
+                            {% endif %}
+                        </h3>
+                        <p>Prediction: <strong>{{ prediction }}</strong></p>
+                        <div class="probability">Confidence: {{ probability }}</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- CSV Upload Tab - FIXED VERSION -->
+            <div id="csv-tab" class="tab-content">
+                <form method="POST" enctype="multipart/form-data" id="csv-form" onsubmit="showLoading(this)">
+                    <div class="file-upload-area" id="uploadArea">
+                        <input
+                            type="file"
+                            id="csv_file"
+                            name="csv_file"
+                            accept=".csv"
+                            class="file-input"
+                            onchange="handleFileSelect(this)"
+                            required
+                        >
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Click to Choose CSV File</div>
+                        <div class="upload-subtext">or drag and drop your file here</div>
+                        <div class="file-info" id="fileInfo">
+                            No file chosen
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn" id="csv-btn">
+                            📊 Predict from CSV
+                        </button>
+                    </div>
+                </form>
+
+                <div class="requirements-box">
+                    <h4>📋 CSV File Requirements:</h4>
+                    <ul>
+                        <li>File must be in CSV format (.csv)</li>
+                        <li>Include all features used in manual input</li>
+                        <li>First row should contain column headers</li>
+                        <li>Ensure data types match expected formats</li>
+                        <li>Remove any unnecessary columns</li>
+                        <li>Supported columns: Age, BusinessTravel, DailyRate, Department, etc.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+        }
+
+        function showLoading(form) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+            submitBtn.disabled = true;
+
+            // Re-enable after 5 seconds (safety measure)
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        }
+
+        function handleFileSelect(input) {
+            const fileInfo = document.getElementById('fileInfo');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // Size in MB
+
+                if (fileName.endsWith('.csv')) {
+                    fileInfo.textContent = `✅ ${fileName} (${fileSize} MB)`;
+                    fileInfo.className = 'file-info success';
+                } else {
+                    fileInfo.textContent = '❌ Please select a CSV file';
+                    fileInfo.className = 'file-info error';
+                    input.value = ''; // Clear the invalid file
+                }
+            } else {
+                fileInfo.textContent = 'No file chosen';
+                fileInfo.className = 'file-info';
+            }
+        }
+
+        // Drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('csv_file');
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            // Handle dropped files
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight() {
+                uploadArea.classList.add('dragover');
+            }
+
+            function unhighlight() {
+                uploadArea.classList.remove('dragover');
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                handleFileSelect(fileInput);
+            }
+
+            // Add click functionality to the entire upload area
+            uploadArea.addEventListener('click', function(e) {
+                if (e.target !== fileInput) {
+                    fileInput.click();
+                }
+            });
+
+            // Add some interactive animations
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add confetti effect for successful predictions
+            const result = document.querySelector('.result');
+            if (result && result.classList.contains('success')) {
+                setTimeout(() => {
+                    if (typeof confetti === 'function') {
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }
+                }, 500);
+            }
+        });
+    </script>
+
+    <!-- Confetti library for celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</body>
+</html>

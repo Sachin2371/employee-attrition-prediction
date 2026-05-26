@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Employee Attrition Prediction</h1>
+            <p class="lead">Predict employee attrition using machine learning and interactive analytics</p>
+            <hr class="my-4">
+            <p>Get insights into employee turnover and make data-driven HR decisions.</p>
+            <div class="mt-4">
+                <a class="btn btn-primary btn-lg me-3" href="{{ url_for('signup') }}">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+                <a class="btn btn-outline-primary btn-lg" href="{{ url_for('login') }}">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                        <h5>ML Powered</h5>
+                        <p>Advanced machine learning algorithms for accurate predictions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                        <h5>Real-time Analytics</h5>
+                        <p>Get instant predictions and probability scores</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h5>Secure & Private</h5>
+                        <p>Your data is securely stored and processed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

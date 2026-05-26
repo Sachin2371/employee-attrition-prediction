@@ -1,0 +1,42 @@
+{
+    "admin": {
+        "email": "admin@company.com",
+        "password": "123456",
+        "created_at": "2024-01-15T10:30:00.000000"
+    },
+    "TEST": {
+        "email": "test@gmail.com",
+        "password": "scrypt:32768:8:1$vKjJjP0ppVA6utH3$5a8c26987e8841070de052622278125c81311666a93fad40de4cc23fb64e5cfe9e8b8900fe15d46abbb86d8fdfc62139bdc0a48a51978a2f4f43f649efcf6ed2",
+        "created_at": "2025-11-20T06:52:55.240005"
+    },
+    "TEST3": {
+        "email": "test@gmail.com",
+        "password": "scrypt:32768:8:1$LvospFD0lMGPvoU7$11dfc16e19d2e6e47f415c518b81a271a43e227a61f134e2d9d22760f90aa6177333ec579416a8bacdb9bda1772219f5d9e2dd4d66e6d10d94998846b7bbda84",
+        "created_at": "2025-11-29T22:30:02.178005"
+    },
+    "karan": {
+        "email": "sachinpalak90661@gmail.com",
+        "password": "scrypt:32768:8:1$m8etY2Pd3iVNuT5X$85c8efc0831011c4db24e32839198aa486b224bd2016663b8071f0099f27109e2427c1ceb2733d14f516e6f23c2045fae6c98f5b1f6f5f5dae9c3448a75abd78",
+        "created_at": "2025-12-07T19:32:20.145336"
+    },
+    "sachinn": {
+        "email": "sachinpalak90661@gmail.com",
+        "password": "scrypt:32768:8:1$1ETMURsfMlH1MtpC$328b9647f35e4aa78d8211b98106bf2f6d8cd4ee2e4b5a9efdd76228138a1cadc36cdcbd01f3838d719152af92f9f76fc9c272a50580de0367b3bb66848db9ee",
+        "created_at": "2026-02-03T10:44:44.813727"
+    },
+    "karann": {
+        "email": "sachinpalak90661@gmail.com",
+        "password": "scrypt:32768:8:1$U9Uri1QIl4Z4vR2o$17dbda17fb5fb0a01e7766d1374a4dc59bcb7942e4ca2b5531d1d7e3d962ac6207225e6e015400f979e5b0f88cfcc89f59abcca9fb650b2a8ec65ba9ec566865",
+        "created_at": "2026-03-01T22:30:58.461803"
+    },
+    "sachin": {
+        "email": "sachin@123",
+        "password": "scrypt:32768:8:1$zOI9DxaP7TGn33iH$794a4e8ce6f59f10bb3942d8aac31aab642af5efaa0b7b74e05a348995ae595cd70fc82ffd57e0f691ed9d9a19050f2a5c3a23f665e237bab81d685619da2acc",
+        "created_at": "2026-05-14T10:37:11.777695"
+    },
+    "sach": {
+        "email": "sk@123",
+        "password": "scrypt:32768:8:1$jrWkRSkEtPPeEyMQ$c585163abeacbc88b5f8a489ed5f43517ffe3ff8ab3aef71ff5e0621840a8c6f406d210331429267b70c74b079cefd1b6e6fd1738a085b377b56c2c5f5f309d7",
+        "created_at": "2026-05-26T07:49:21.997014"
+    }
+}

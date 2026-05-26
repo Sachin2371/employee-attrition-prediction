@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-brain"></i> Model Training</h4>
+            </div>
+            <div class="card-body">
+                <p>Train the machine learning model using the current dataset. This process will:</p>
+                <ul>
+                    <li>Preprocess the employee data</li>
+                    <li>Train a Random Forest classifier</li>
+                    <li>Evaluate model performance</li>
+                    <li>Save the trained model for predictions</li>
+                </ul>
+                
+                {% if accuracy %}
+                <div class="alert alert-success">
+                    <h5>Training Completed Successfully!</h5>
+                    <p><strong>Accuracy:</strong> {{ "%.2f"|format(accuracy) }}%</p>
+                    {% if model_info %}
+                    <p><strong>Algorithm:</strong> {{ model_info.algorithm }}</p>
+                    <p><strong>Features Used:</strong> {{ model_info.features_used }}</p>
+                    <p><strong>Training Samples:</strong> {{ model_info.training_samples }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <form method="POST">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-play-circle"></i> Start Training
+                    </button>
+                </form>
+                
+                <div class="mt-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Training Information</h6>
+                            <p><small>The model uses a Random Forest algorithm with 100 estimators. Training typically takes a few seconds depending on dataset size.</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
