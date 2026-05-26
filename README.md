@@ -52,3 +52,17 @@ Employee Attrition/
 ├── Dataset.csv
 ├── requirements.txt
 └── README.md
+
+## Project Screenshots
+
+### Login Page
+![Login Page](Login Page.png)
+
+### Dashboard
+![Dashboard](Dashboard.png)
+
+### Manual Prediction
+![Manual Prediction](Manual prediction.png)
+
+### Bulk Prediction Results
+![Bulk Prediction](Bulk Prediction.png)
